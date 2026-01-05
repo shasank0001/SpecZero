@@ -158,7 +158,13 @@ export function IframePreview({
       )}
 
       {/* Iframe Container */}
-      <div className="relative flex-1 bg-[repeating-conic-gradient(#f8fafc_0%_25%,#f1f5f9_0%_50%)] dark:bg-[repeating-conic-gradient(#1e293b_0%_25%,#0f172a_0%_50%)] bg-[length:20px_20px]">
+      <div 
+        className="relative flex-1 overflow-hidden"
+        style={{ 
+          width: typeof width === 'number' ? `${width}px` : width,
+          height: typeof height === 'number' ? `${height}px` : height,
+        }}
+      >
         {/* Loading Overlay */}
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-10">
@@ -177,8 +183,7 @@ export function IframePreview({
           ref={iframeRef}
           src={src}
           title={title}
-          className="border-0 bg-background"
-          style={{ width, height }}
+          className="absolute inset-0 w-full h-full border-0 bg-background"
           onLoad={() => setIsLoading(false)}
         />
       </div>

@@ -28,7 +28,7 @@ export function SectionPreviewLoader() {
 
   if (!PreviewComponent) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-8">
+      <div className="flex items-center justify-center h-full p-8">
         <EmptyState
           icon={FileQuestion}
           title="Preview not found"
@@ -41,7 +41,7 @@ export function SectionPreviewLoader() {
   return (
     <Suspense
       fallback={
-        <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <div className="flex flex-col items-center justify-center h-full gap-4">
           <div className="relative">
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
               <Loader2 className="w-6 h-6 text-primary animate-spin" />

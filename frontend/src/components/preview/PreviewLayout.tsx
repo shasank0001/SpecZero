@@ -48,7 +48,7 @@ export function PreviewLayout() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="h-full w-full bg-background text-foreground overflow-auto">
       <Outlet />
     </div>
   );

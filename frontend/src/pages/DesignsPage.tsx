@@ -1,14 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import {
   SectionNav,
   IframePreview,
-  PreviewControls,
   InspectorPanel,
   DesignTokensViewer,
-  type DeviceSize,
-  DEVICE_SIZES,
 } from "@/components/designs";
+import { Smartphone, Tablet, Monitor, GripVertical, ChevronUp, ChevronDown } from "lucide-react";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { loadSections } from "@/lib/section-navigator-loader";
 import {
@@ -22,12 +20,18 @@ import {
 
 type DesignTab = "shell" | "sections" | "tokens";
 
+const MIN_WIDTH_PERCENT = 25;
+const DEFAULT_WIDTH_PERCENT = 100;
+
 export default function DesignsPage() {
   // State
   const [activeTab, setActiveTab] = useState<DesignTab>("sections");
   const [selectedSection, setSelectedSection] = useState<string | undefined>();
   const [selectedScreen, setSelectedScreen] = useState<string | undefined>();
-  const [deviceSize, setDeviceSize] = useState<DeviceSize>("desktop");
+  const [widthPercent, setWidthPercent] = useState(DEFAULT_WIDTH_PERCENT);
+  const [inspectorCollapsed, setInspectorCollapsed] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
 
   // Load sections
   const sections = useMemo(() => loadSections(), []);
@@ -55,6 +59,44 @@ export default function DesignsPage() {
     setSelectedScreen(screenName);
   };
 
+  // Handle resize drag (like design-os)
+  const handleMouseDown = useCallback(() => {
+    isDragging.current = true;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging.current || !containerRef.current) return;
+
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const containerWidth = containerRect.width;
+      const containerCenter = containerRect.left + containerWidth / 2;
+
+      // Calculate distance from center
+      const distanceFromCenter = Math.abs(e.clientX - containerCenter);
+      const maxDistance = containerWidth / 2;
+
+      // Convert to percentage
+      let newWidthPercent = (distanceFromCenter / maxDistance) * 100;
+
+      // Clamp between min width and 100%
+      newWidthPercent = Math.max(MIN_WIDTH_PERCENT, Math.min(100, newWidthPercent));
+
+      setWidthPercent(newWidthPercent);
+    };
+
+    const handleMouseUp = () => {
+      isDragging.current = false;
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.body.style.cursor = 'ew-resize';
+    document.body.style.userSelect = 'none';
+  }, []);
+
   // Tab definitions
   const tabs: { id: DesignTab; label: string; icon: React.ReactNode }[] = [
     { id: "shell", label: "Shell", icon: <LayoutTemplate className="w-4 h-4" /> },
@@ -62,8 +104,7 @@ export default function DesignsPage() {
     { id: "tokens", label: "Tokens", icon: <Palette className="w-4 h-4" /> },
   ];
 
-  // Get device dimensions for display
-  const dimensions = deviceSize !== "full" ? DEVICE_SIZES[deviceSize] : null;
+  const previewWidth = `${widthPercent}%`;
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)] -m-6">
@@ -114,45 +155,89 @@ export default function DesignsPage() {
         {activeTab === "shell" && (
           <>
             {/* Preview Area */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col overflow-hidden">
               {/* Preview Controls */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/20">
-                <PreviewControls
-                  deviceSize={deviceSize}
-                  onDeviceSizeChange={setDeviceSize}
-                />
-                {dimensions && (
-                  <span className="text-xs text-muted-foreground font-mono">
-                    {dimensions.width} × {dimensions.height}
-                  </span>
-                )}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/20 shrink-0">
+                {/* Device size presets */}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setWidthPercent(30)}
+                    className={cn(
+                      "p-2 rounded-lg transition-colors",
+                      widthPercent <= 40
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                    title="Mobile (30%)"
+                  >
+                    <Smartphone className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setWidthPercent(60)}
+                    className={cn(
+                      "p-2 rounded-lg transition-colors",
+                      widthPercent > 40 && widthPercent <= 70
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                    title="Tablet (60%)"
+                  >
+                    <Tablet className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setWidthPercent(100)}
+                    className={cn(
+                      "p-2 rounded-lg transition-colors",
+                      widthPercent > 70
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    )}
+                    title="Desktop (100%)"
+                  >
+                    <Monitor className="w-4 h-4" />
+                  </button>
+                </div>
+                <span className="text-xs text-muted-foreground font-mono">
+                  {Math.round(widthPercent)}%
+                </span>
               </div>
 
-              {/* Preview */}
-              <div className="flex-1 flex items-center justify-center p-4 overflow-auto bg-[repeating-conic-gradient(#f8fafc_0%_25%,#f1f5f9_0%_50%)] dark:bg-[repeating-conic-gradient(#1e293b_0%_25%,#0f172a_0%_50%)] bg-[length:20px_20px]">
+              {/* Preview with resizable container */}
+              <div
+                ref={containerRef}
+                className="flex-1 overflow-hidden flex items-stretch justify-center p-4 bg-muted/30"
+              >
+                {/* Left resize handle */}
                 <div
-                  className={cn(
-                    "bg-background overflow-hidden transition-all duration-300",
-                    deviceSize === "full"
-                      ? "w-full h-full"
-                      : "shadow-2xl shadow-black/10 dark:shadow-black/30 rounded-xl border border-border"
-                  )}
-                  style={
-                    deviceSize === "full"
-                      ? undefined
-                      : {
-                          width: DEVICE_SIZES[deviceSize].width,
-                          height: DEVICE_SIZES[deviceSize].height,
-                        }
-                  }
+                  className="w-4 flex items-center justify-center cursor-ew-resize group shrink-0"
+                  onMouseDown={handleMouseDown}
+                >
+                  <div className="w-1 h-16 rounded-full bg-border group-hover:bg-primary/50 transition-colors flex items-center justify-center">
+                    <GripVertical className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                </div>
+
+                {/* Preview container */}
+                <div
+                  className="bg-background rounded-lg shadow-xl border border-border overflow-hidden"
+                  style={{ width: previewWidth, minWidth: '320px', maxWidth: '100%' }}
                 >
                   <IframePreview
                     src="/preview/shell"
                     title="Shell Preview"
-                    width={deviceSize === "full" ? "100%" : DEVICE_SIZES[deviceSize].width}
-                    height={deviceSize === "full" ? "100%" : DEVICE_SIZES[deviceSize].height}
-                    showControls={deviceSize !== "full"}
+                    className="w-full h-full"
+                    showControls={false}
                   />
+                </div>
+
+                {/* Right resize handle */}
+                <div
+                  className="w-4 flex items-center justify-center cursor-ew-resize group shrink-0"
+                  onMouseDown={handleMouseDown}
+                >
+                  <div className="w-1 h-16 rounded-full bg-border group-hover:bg-primary/50 transition-colors flex items-center justify-center">
+                    <GripVertical className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -185,17 +270,52 @@ export default function DesignsPage() {
               />
             </aside>
 
-            {/* Preview Area */}
-            <div className="flex-1 flex flex-col">
+            {/* Preview Area + Inspector */}
+            <div className="flex-1 flex flex-col overflow-hidden">
               {previewUrl ? (
                 <>
                   {/* Preview Controls */}
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/20">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/20 shrink-0">
                     <div className="flex items-center gap-3">
-                      <PreviewControls
-                        deviceSize={deviceSize}
-                        onDeviceSizeChange={setDeviceSize}
-                      />
+                      {/* Device size presets */}
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => setWidthPercent(30)}
+                          className={cn(
+                            "p-2 rounded-lg transition-colors",
+                            widthPercent <= 40
+                              ? "bg-primary/10 text-primary"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                          )}
+                          title="Mobile (30%)"
+                        >
+                          <Smartphone className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setWidthPercent(60)}
+                          className={cn(
+                            "p-2 rounded-lg transition-colors",
+                            widthPercent > 40 && widthPercent <= 70
+                              ? "bg-primary/10 text-primary"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                          )}
+                          title="Tablet (60%)"
+                        >
+                          <Tablet className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setWidthPercent(100)}
+                          className={cn(
+                            "p-2 rounded-lg transition-colors",
+                            widthPercent > 70
+                              ? "bg-primary/10 text-primary"
+                              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                          )}
+                          title="Desktop (100%)"
+                        >
+                          <Monitor className="w-4 h-4" />
+                        </button>
+                      </div>
                       <div className="h-4 w-px bg-border" />
                       <div className="flex items-center gap-2">
                         <Play className="w-3.5 h-3.5 text-green-500" />
@@ -204,39 +324,72 @@ export default function DesignsPage() {
                         </span>
                       </div>
                     </div>
-                    {dimensions && (
-                      <span className="text-xs text-muted-foreground font-mono">
-                        {dimensions.width} × {dimensions.height}
-                      </span>
-                    )}
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {Math.round(widthPercent)}%
+                    </span>
                   </div>
 
-                  {/* Preview */}
-                  <div className="flex-1 flex items-center justify-center p-4 overflow-auto bg-[repeating-conic-gradient(#f8fafc_0%_25%,#f1f5f9_0%_50%)] dark:bg-[repeating-conic-gradient(#1e293b_0%_25%,#0f172a_0%_50%)] bg-[length:20px_20px]">
+                  {/* Preview with resizable container */}
+                  <div
+                    ref={containerRef}
+                    className="flex-1 overflow-hidden flex items-stretch justify-center p-4 bg-muted/30"
+                  >
+                    {/* Left resize handle */}
                     <div
-                      className={cn(
-                        "bg-background overflow-hidden transition-all duration-300",
-                        deviceSize === "full"
-                          ? "w-full h-full"
-                          : "shadow-2xl shadow-black/10 dark:shadow-black/30 rounded-xl border border-border"
-                      )}
-                      style={
-                        deviceSize === "full"
-                          ? undefined
-                          : {
-                              width: DEVICE_SIZES[deviceSize].width,
-                              height: DEVICE_SIZES[deviceSize].height,
-                            }
-                      }
+                      className="w-4 flex items-center justify-center cursor-ew-resize group shrink-0"
+                      onMouseDown={handleMouseDown}
+                    >
+                      <div className="w-1 h-16 rounded-full bg-border group-hover:bg-primary/50 transition-colors flex items-center justify-center">
+                        <GripVertical className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </div>
+
+                    {/* Preview container */}
+                    <div
+                      className="bg-background rounded-lg shadow-xl border border-border overflow-hidden"
+                      style={{ width: previewWidth, minWidth: '320px', maxWidth: '100%' }}
                     >
                       <IframePreview
                         src={previewUrl}
                         title={`${selectedSection}/${selectedScreen}`}
-                        width={deviceSize === "full" ? "100%" : DEVICE_SIZES[deviceSize].width}
-                        height={deviceSize === "full" ? "100%" : DEVICE_SIZES[deviceSize].height}
-                        showControls={deviceSize !== "full"}
+                        className="w-full h-full"
+                        showControls={false}
                       />
                     </div>
+
+                    {/* Right resize handle */}
+                    <div
+                      className="w-4 flex items-center justify-center cursor-ew-resize group shrink-0"
+                      onMouseDown={handleMouseDown}
+                    >
+                      <div className="w-1 h-16 rounded-full bg-border group-hover:bg-primary/50 transition-colors flex items-center justify-center">
+                        <GripVertical className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Collapsible Inspector - Below Preview */}
+                  <div className="border-t border-border bg-background shrink-0">
+                    <button
+                      onClick={() => setInspectorCollapsed(!inspectorCollapsed)}
+                      className="w-full flex items-center justify-between px-4 py-2 hover:bg-muted/50 transition-colors"
+                    >
+                      <span className="text-sm font-medium text-muted-foreground">Inspector</span>
+                      {inspectorCollapsed ? (
+                        <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                      )}
+                    </button>
+                    {!inspectorCollapsed && (
+                      <div className="max-h-64 overflow-auto">
+                        <InspectorPanel
+                          screenName={selectedScreen}
+                          sectionId={selectedSection}
+                          sampleData={currentSection ? { section: currentSection } : undefined}
+                        />
+                      </div>
+                    )}
                   </div>
                 </>
               ) : (
@@ -249,15 +402,6 @@ export default function DesignsPage() {
                 </div>
               )}
             </div>
-
-            {/* Inspector */}
-            <aside className="w-80 border-l border-border bg-card overflow-auto">
-              <InspectorPanel
-                screenName={selectedScreen}
-                sectionId={selectedSection}
-                sampleData={currentSection ? { section: currentSection } : undefined}
-              />
-            </aside>
           </>
         )}
       </div>
