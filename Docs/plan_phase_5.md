@@ -92,6 +92,8 @@ src/sections/
 
 **Key Principle:** Components in `components/` folder are **props-based** and exportable. Preview wrappers inject sample data and are NOT included in the export.
 
+> Pathing reminder: follow the Phase 2 loader strategy (project-root relative globs or `new URL(..., import.meta.url)`) for preview imports like `data.json`. Avoid `/product/...` absolute paths unless `vite.config.ts` explicitly allows it.
+
 ### 1.3 Create Sample Patient Table Component
 
 Create `src/sections/patients/components/PatientTable.tsx`:
@@ -315,7 +317,7 @@ import { PatientTable } from "./components/PatientTable";
 import { PatientCard } from "./components/PatientCard";
 
 // Import sample data (preview only - not exported)
-import sampleData from "@/../product/sections/patients/data.json";
+import sampleData from "/product/sections/patients/data.json";
 
 export default function PatientListPreview() {
   const handleView = (id: string) => {
@@ -3125,7 +3127,7 @@ This step ensures exportable components follow the props-only pattern and don't 
 
 ```tsx
 // ❌ WRONG - Component imports data directly (not exportable)
-import data from "@/../product/sections/patients/data.json";
+import data from "/product/sections/patients/data.json";
 export function PatientTable() {
   return <table>{data.patients.map(...)}</table>;
 }
@@ -3135,6 +3137,8 @@ export function PatientTable({ patients }: PatientTableProps) {
   return <table>{patients.map(...)}</table>;
 }
 ```
+
+> Run this check in two places: (1) an ESLint rule (custom plugin or inline rule in `.eslintrc`) that fails `npm run lint`, and (2) a runtime validator surfaced in the Designs tab inspector so violations are visible without opening the terminal.
 
 ### 10.2 Create Validation Utility
 
@@ -3442,7 +3446,7 @@ export function InspectorPanel({
 |------|-------------|
 | **No Data Imports** | Components in `components/` folder cannot import JSON data files |
 | **Props Interface** | All exported components should have a Props interface |
-| **No Product Path** | Cannot import from `@/../product/` or `../../../product/` |
+| **Product Path** | Import preview-only sample files via `/product/...` (avoid `@/../product/...` and deep relative paths) |
 | **Preview Wrappers** | Only preview files (not in `components/`) can import sample data |
 
 ### 10.6 Component Structure Validation

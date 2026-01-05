@@ -1,0 +1,106 @@
+// Prisma Schema for DentalFlow CRM
+// Database: PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ENUMS
+// ==========================================
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum TreatmentStatus {
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+}
+
+// ==========================================
+// MODELS
+// ==========================================
+
+model Patient {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String   @unique
+  phone       String?
+  dateOfBirth DateTime?
+  address     String?
+  notes       String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  appointments Appointment[]
+  treatments   Treatment[]
+}
+
+model Dentist {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  specialty String?
+  phone     String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  appointments Appointment[]
+}
+
+model Appointment {
+  id        String            @id @default(cuid())
+  dateTime  DateTime
+  duration  Int               @default(30)
+  status    AppointmentStatus @default(SCHEDULED)
+  notes     String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId String
+  
+  dentist   Dentist @relation(fields: [dentistId], references: [id], onDelete: Cascade)
+  dentistId String
+
+  @@index([patientId])
+  @@index([dentistId])
+  @@index([dateTime])
+}
+
+model Treatment {
+  id          String          @id @default(cuid())
+  name        String
+  description String?
+  status      TreatmentStatus @default(PLANNED)
+  startDate   DateTime?
+  endDate     DateTime?
+  cost        Float?
+  notes       String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId String
+
+  @@index([patientId])
+}

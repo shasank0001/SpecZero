@@ -100,8 +100,9 @@ npm install -D @types/node
   --font-sans: "DM Sans", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
   
-  --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(222.2 84% 4.9%);
+    /* shadcn-style theme channels used by components */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
   /* ... more tokens */
 }
 ```
@@ -1206,7 +1207,8 @@ npm install @types/file-saver -D
 - [ ] Create template `.env.example`
 - [ ] Create template `.cursorrules`
 - [ ] Create template `next.config.ts`
-- [ ] Create template `tailwind.config.ts`
+- [ ] Create template `postcss.config.js`
+- [ ] Create template `src/app/globals.css`
 - [ ] Pin golden stack: Next.js 15 App Router, TypeScript, Tailwind v4, Prisma, PostgreSQL, Clerk
 - [ ] Include Clerk keys in `.env.example` (`CLERK_SECRET_KEY`, `CLERK_PUBLISHABLE_KEY`) and a Postgres `DATABASE_URL` placeholder
 - [ ] Add Clerk provider wiring placeholder in App Router layout template notes
@@ -1221,7 +1223,8 @@ src/
     ├── env.example.template
     ├── cursorrules.template
     ├── next.config.template
-    └── tailwind.config.template
+    ├── postcss.config.template
+    └── tailwind.css.template
 ```
 
 ---

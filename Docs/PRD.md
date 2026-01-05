@@ -1,7 +1,7 @@
 # Vibe Architect - Product Requirements Document
 
-> **Version:** 1.0  
-> **Date:** January 5, 2026  
+> **Version:** 1.0
+> **Date:** January 5, 2026
 > **Status:** Draft
 
 ---
@@ -22,12 +22,12 @@ Vibe Architect separates *what to build* from *how to build it*, creating a hand
 
 ## 2. Core Value Proposition
 
-| Value | Description |
-|-------|-------------|
-| **Visual Prototyping** | Users see UI components running live as they design them (The "Mock App" experience) |
-| **Backend Architecture** | Automatically generates `schema.prisma` (Database) and `validators.ts` (Zod schemas) to match the UI |
-| **Agent-Agnostic Handoff** | Export is a configured Next.js repository with a `docs/prompts/` folder for any AI agent |
-| **File-Based Workflow** | No database for the tool itself — everything is files that can be version controlled |
+| Value                            | Description                                                                                              |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Visual Prototyping**     | Users see UI components running live as they design them (The "Mock App" experience)                     |
+| **Backend Architecture**   | Automatically generates `schema.prisma` (Database) and `validators.ts` (Zod schemas) to match the UI |
+| **Agent-Agnostic Handoff** | Export is a configured Next.js repository with a `docs/prompts/` folder for any AI agent               |
+| **File-Based Workflow**    | No database for the tool itself — everything is files that can be version controlled                    |
 
 ---
 
@@ -35,14 +35,14 @@ Vibe Architect separates *what to build* from *how to build it*, creating a hand
 
 The exported project enforces this production stack:
 
-| Layer | Technology |
-|-------|------------|
-| **Framework** | Next.js 15 (App Router) |
-| **Language** | TypeScript |
-| **Database** | PostgreSQL (with Prisma ORM) |
-| **Authentication** | Clerk |
-| **Validation** | Zod |
-| **Styling** | Tailwind CSS v4 + shadcn/ui |
+| Layer                    | Technology                   |
+| ------------------------ | ---------------------------- |
+| **Framework**      | Next.js 15 (App Router)      |
+| **Language**       | TypeScript                   |
+| **Database**       | PostgreSQL (with Prisma ORM) |
+| **Authentication** | Clerk                        |
+| **Validation**     | Zod                          |
+| **Styling**        | Tailwind CSS v4 + shadcn/ui  |
 
 ---
 
@@ -50,30 +50,26 @@ The exported project enforces this production stack:
 
 ### 4.1 Tech Stack
 
-| Category | Technology |
-|----------|------------|
-| **Build Tool** | Vite |
-| **UI Library** | React 18 |
-| **Language** | TypeScript |
-| **Styling** | Tailwind CSS v4 |
-| **UI Components** | shadcn/ui (Radix primitives) |
-| **Routing** | React Router DOM |
-| **Icons** | Lucide React |
-| **Fonts** | DM Sans + IBM Plex Mono |
-| **State** | File-based (no state library) |
-| **Persistence** | File system (via `import.meta.glob`) |
-| **Diagrams** | Mermaid.js |
+| Category                | Technology                             |
+| ----------------------- | -------------------------------------- |
+| **Build Tool**    | Vite                                   |
+| **UI Library**    | React 18                               |
+| **Language**      | TypeScript                             |
+| **Styling**       | Tailwind CSS v4                        |
+| **UI Components** | shadcn/ui (Radix primitives)           |
+| **Routing**       | React Router DOM                       |
+| **Icons**         | Lucide React                           |
+| **Fonts**         | DM Sans + IBM Plex Mono                |
+| **State**         | File-based (no state library)          |
+| **Persistence**   | File system (via `import.meta.glob`) |
+| **Diagrams**      | Mermaid.js                             |
 
 ### 4.2 Key Architectural Decisions
 
 1. **No AI SDK Integration** — The tool is "dumb" but "aware." It creates prompt files; the user runs them in their AI agent of choice.
-
 2. **File-Based State** — State is derived from file existence. No IndexedDB, no database.
-
 3. **Build-Time Loading** — Uses Vite's `import.meta.glob` to load markdown/JSON/TypeScript files.
-
 4. **Props-Based Components** — All exportable components receive data via props (never import data directly).
-
 5. **Iframe Preview Isolation** — Screen designs are previewed in iframes for CSS/theme isolation.
 
 ---
@@ -83,23 +79,27 @@ The exported project enforces this production stack:
 The application has **4 main tabs** (no chat interface):
 
 ### Tab 1: Plan
+
 - Renders `product/product-overview.md` and `product/product-roadmap.md`
 - Shows high-level vision, problems solved, and feature list
 - Displays section breakdown with completion status
 
 ### Tab 2: Data
+
 - Renders `prisma/schema.prisma` as a **Mermaid.js ERD diagram**
 - Shows entity relationships visually
 - Displays `lib/validators.ts` (Zod schemas)
 - Lists all data models with their fields and types
 
 ### Tab 3: Designs
+
 - Renders React components from `src/sections/*/` live in an iframe
 - Shows design tokens (colors, typography)
 - Displays App Shell (sidebar, navigation)
 - Provides device size presets (mobile/tablet/desktop)
 
 ### Tab 4: Export
+
 - One-click export to ZIP file
 - Shows export contents preview
 - Validates completeness before export
@@ -114,8 +114,6 @@ vibe-architect/
 ├── package.json
 ├── vite.config.ts
 ├── tsconfig.json
-├── tailwind.config.ts
-├── postcss.config.js
 │
 ├── public/
 │   └── favicon.svg
@@ -146,23 +144,25 @@ vibe-architect/
 │   │   │   ├── TabNav.tsx            # 4-tab navigation
 │   │   │   └── ThemeToggle.tsx
 │   │   ├── plan/
-│   │   │   ├── PlanPage.tsx
 │   │   │   ├── OverviewCard.tsx
 │   │   │   └── RoadmapTimeline.tsx
 │   │   ├── data/
-│   │   │   ├── DataPage.tsx
 │   │   │   ├── MermaidDiagram.tsx
 │   │   │   ├── SchemaViewer.tsx
 │   │   │   └── ValidatorViewer.tsx
 │   │   ├── designs/
-│   │   │   ├── DesignsPage.tsx
 │   │   │   ├── ComponentPreview.tsx
 │   │   │   ├── ShellPreview.tsx
 │   │   │   └── DeviceSizeToggle.tsx
 │   │   └── export/
-│   │       ├── ExportPage.tsx
 │   │       ├── ExportPreview.tsx
 │   │       └── ExportButton.tsx
+│   │
+│   ├── pages/                        # Route-level pages for the 4 tabs
+│   │   ├── PlanPage.tsx
+│   │   ├── DataPage.tsx
+│   │   ├── DesignsPage.tsx
+│   │   └── ExportPage.tsx
 │   │
 │   ├── sections/                     # User's screen designs (live)
 │   │   └── [section-id]/
@@ -201,14 +201,14 @@ vibe-architect/
 
 ### Phase 1: Product Vision (Brainstorm)
 
-**User Action:**  
+**User Action:**
 Runs AI prompt command (e.g., `/product-vision`) in their agent.
 
-**AI Agent Action:**  
+**AI Agent Action:**
 Generates `product/product-overview.md` and `product/product-roadmap.md`.
 
-**Tool Visualization:**  
-Plan tab renders the markdown beautifully with:
+**Tool Visualization:**Plan tab renders the markdown beautifully with:
+
 - Product name and tagline
 - Problem statement
 - Target users
@@ -216,6 +216,7 @@ Plan tab renders the markdown beautifully with:
 - Section/milestone breakdown
 
 **Output Files:**
+
 ```
 product/
 ├── product-overview.md
@@ -226,21 +227,23 @@ product/
 
 ### Phase 2: Foundation (Architect)
 
-**User Action:**  
+**User Action:**
 Runs AI prompt command (e.g., `/architect-database`) describing data entities.
 
-**AI Agent Action:**  
+**AI Agent Action:**
+
 - Generates `prisma/schema.prisma`
 - Generates `lib/validators.ts` (Zod schemas)
 - Generates `product/data-model/data-model.md`
 
-**Tool Visualization:**  
-Data tab renders:
+**Tool Visualization:**Data tab renders:
+
 - Mermaid.js ERD diagram showing all models and relationships
 - Collapsible panels for each model's fields
 - Zod schema code viewer
 
 **Output Files:**
+
 ```
 prisma/
 └── schema.prisma
@@ -257,23 +260,25 @@ product/
 
 ### Phase 3: Visual Design (The Mock App)
 
-**User Action:**  
+**User Action:**
 Runs AI prompt commands to design screens (e.g., `/design-shell`, `/design-screen patients`).
 
-**AI Agent Action:**  
+**AI Agent Action:**
+
 - Generates `src/shell/components/*.tsx` (App Shell)
 - Generates `src/sections/[id]/components/*.tsx` (Feature components)
 - Generates `product/sections/[id]/data.json` (Sample data)
 - Generates `product/sections/[id]/types.ts` (TypeScript interfaces)
 
-**Tool Visualization:**  
-Designs tab renders:
+**Tool Visualization:**Designs tab renders:
+
 - Live iframe preview of components
 - Device size toggles (mobile/tablet/desktop)
 - Component tree sidebar
 - Sample data inspector
 
 **Output Files:**
+
 ```
 src/
 ├── shell/
@@ -301,15 +306,16 @@ product/
 
 ### Phase 4: Export
 
-**User Action:**  
+**User Action:**
 Clicks "Export Project" button in the Export tab.
 
-**Tool Action:**  
+**Tool Action:**
+
 - Bundles all code, schema, docs, and instructions into a ZIP
 - Transforms import paths for portability
 - Generates instruction files for AI agents
 
-**Output:**  
+**Output:**
 `product-plan.zip` (see Section 8)
 
 ---
@@ -326,7 +332,7 @@ product-plan/
 ├── .env.example                        # DATABASE_URL, CLERK_SECRET_KEY
 ├── .cursorrules                        # AI agent rules (Cursor/Windsurf)
 ├── tsconfig.json
-├── tailwind.config.ts
+├── postcss.config.js
 ├── next.config.ts
 │
 ├── docs/
@@ -341,6 +347,14 @@ product-plan/
 │           ├── phase_2_shell.md        # App Shell implementation
 │           ├── phase_3_patients.md     # Feature A guide
 │           └── phase_4_appointments.md # Feature B guide
+│
+│   # Original product definition (useful for agent handoff)
+│   └── product/
+│       ├── product-overview.md
+│       ├── product-roadmap.md
+│       └── sections/
+│           └── [section-id]/
+│               └── spec.md
 │
 ├── prisma/
 │   ├── schema.prisma                   # Complete database schema
@@ -387,15 +401,15 @@ Located in `docs/prompts/` within the user's project. These are agent-agnostic m
 
 ### Available Commands
 
-| Command | Purpose | Output |
-|---------|---------|--------|
-| `/product-vision` | Define product vision and features | `product-overview.md`, `product-roadmap.md` |
-| `/architect-database` | Design data model | `schema.prisma`, `validators.ts` |
-| `/design-tokens` | Define colors and typography | `colors.json`, `typography.json` |
-| `/design-shell` | Create app shell/navigation | `AppShell.tsx`, `MainNav.tsx` |
-| `/design-screen [section]` | Design a specific screen | `[Section]/*.tsx`, `data.json` |
-| `/sample-data [section]` | Generate sample data | `data.json`, `types.ts` |
-| `/export-project` | Generate export package | `product-plan.zip` |
+| Command                      | Purpose                            | Output                                          |
+| ---------------------------- | ---------------------------------- | ----------------------------------------------- |
+| `/product-vision`          | Define product vision and features | `product-overview.md`, `product-roadmap.md` |
+| `/architect-database`      | Design data model                  | `schema.prisma`, `validators.ts`            |
+| `/design-tokens`           | Define colors and typography       | `colors.json`, `typography.json`            |
+| `/design-shell`            | Create app shell/navigation        | `AppShell.tsx`, `MainNav.tsx`               |
+| `/design-screen [section]` | Design a specific screen           | `[Section]/*.tsx`, `data.json`              |
+| `/sample-data [section]`   | Generate sample data               | `data.json`, `types.ts`                     |
+| `/export-project`          | Generate export package            | `product-plan.zip`                            |
 
 ---
 
@@ -429,7 +443,7 @@ Preview components (not exported) inject sample data:
 
 ```tsx
 // PatientList.tsx (Preview wrapper - NOT exported)
-import data from '@/../product/sections/patients/data.json';
+import data from '/product/sections/patients/data.json';
 import { PatientTable } from './components/PatientTable';
 
 export default function PatientListPreview() {
@@ -471,7 +485,7 @@ erDiagram
         String name
         String specialty
     }
-    
+  
     Patient ||--o{ Appointment : "has"
     Dentist ||--o{ Appointment : "schedules"
 ```
@@ -480,12 +494,12 @@ erDiagram
 
 ## 12. Success Metrics
 
-| Metric | Target |
-|--------|--------|
-| Time from idea to export | < 30 minutes |
-| Export completeness | 100% (all required files present) |
-| Agent compatibility | Works with Cursor, Windsurf, Claude Code, Copilot |
-| Zero runtime errors | Exported components render without errors |
+| Metric                   | Target                                            |
+| ------------------------ | ------------------------------------------------- |
+| Time from idea to export | < 30 minutes                                      |
+| Export completeness      | 100% (all required files present)                 |
+| Agent compatibility      | Works with Cursor, Windsurf, Claude Code, Copilot |
+| Zero runtime errors      | Exported components render without errors         |
 
 ---
 
@@ -504,34 +518,40 @@ erDiagram
 ## 14. Development Phases
 
 ### Phase 1: Foundation (Week 1)
+
 - [ ] Initialize Vite + React + TypeScript project
 - [ ] Set up Tailwind CSS v4 + shadcn/ui
 - [ ] Implement file loaders (`product-loader.ts`, `schema-loader.ts`)
 - [ ] Create base layout and 4-tab navigation
 
 ### Phase 2: Plan Tab (Week 1)
+
 - [ ] Markdown rendering for product-overview.md
 - [ ] Roadmap timeline component
 - [ ] Section completion tracking
 
 ### Phase 3: Data Tab (Week 2)
+
 - [ ] Prisma schema parser
 - [ ] Mermaid.js ERD generator
 - [ ] Zod schema viewer
 
 ### Phase 4: Designs Tab (Week 2-3)
+
 - [ ] Iframe preview system
 - [ ] Component tree navigation
 - [ ] Device size toggles
 - [ ] Sample data inspector
 
 ### Phase 5: Export Tab (Week 3)
+
 - [ ] ZIP generation with jszip
 - [ ] Instruction file templates
 - [ ] Path transformation for portability
 - [ ] Export validation
 
 ### Phase 6: Polish (Week 4)
+
 - [ ] Error handling and empty states
 - [ ] Theme toggle (light/dark)
 - [ ] Documentation
