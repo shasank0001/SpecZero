@@ -2,8 +2,12 @@ import { Outlet } from "react-router-dom";
 import { TabNav } from "./TabNav";
 import { ThemeToggle } from "./ThemeToggle";
 import { Sparkles } from "lucide-react";
+import { useAppShortcuts } from "@/hooks/useKeyboardShortcuts";
 
 export function AppLayout() {
+  // Enable keyboard shortcuts for navigation
+  useAppShortcuts();
+  
   return (
     <div className="relative min-h-screen bg-mesh-gradient">
       {/* Header */}
