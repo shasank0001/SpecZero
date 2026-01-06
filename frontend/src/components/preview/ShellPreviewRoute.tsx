@@ -10,7 +10,8 @@ const ShellPreview = lazy(() =>
         <EmptyState
           icon={LayoutTemplate}
           title="No shell preview"
-          description="Create shell components in src/shell/components/ to see them here"
+          description="Generate shell components using the design-shell command in your AI agent."
+          command="/design-shell"
         />
       </div>
     ),

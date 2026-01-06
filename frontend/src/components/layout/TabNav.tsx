@@ -3,10 +3,10 @@ import { FileText, Database, Palette, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { path: "/", label: "Plan", icon: FileText },
-  { path: "/data", label: "Data", icon: Database },
-  { path: "/designs", label: "Designs", icon: Palette },
-  { path: "/export", label: "Export", icon: Download },
+  { path: "/", label: "Plan", icon: FileText, tourId: "tab-plan" },
+  { path: "/data", label: "Data", icon: Database, tourId: "tab-data" },
+  { path: "/designs", label: "Designs", icon: Palette, tourId: "tab-designs" },
+  { path: "/export", label: "Export", icon: Download, tourId: "tab-export" },
 ];
 
 export function TabNav() {
@@ -19,6 +19,7 @@ export function TabNav() {
             key={tab.path}
             to={tab.path}
             end={tab.path === "/"}
+            data-tour={tab.tourId}
             className={({ isActive }) =>
               cn(
                 "group relative flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200",

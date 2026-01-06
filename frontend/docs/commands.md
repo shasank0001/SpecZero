@@ -1,10 +1,35 @@
 # AI Commands Reference
 
-SpecZero uses AI prompt commands to generate project files. Run these commands in your AI coding agent (Cursor, Windsurf, etc.).
+SpecZero uses AI prompt commands to generate project files. These prompts work with any AI coding agent.
+
+## Using Commands
+
+### VS Code with GitHub Copilot
+
+Reference the prompt file in Copilot Chat:
+```
+#file:prompts/product-vision.md
+
+[Your product description here]
+```
+
+Or attach the file directly to your chat message.
+
+### Cursor / Windsurf
+
+Use the slash command directly:
+```
+/product-vision
+
+[Your product description here]
+```
+
+---
 
 ## Product Vision Commands
 
 ### `/product-vision`
+**Prompt file:** `prompts/product-vision.md`
 
 Generate product overview and roadmap.
 
@@ -28,6 +53,7 @@ Target users: Dental clinic staff and administrators.
 ## Database Commands
 
 ### `/architect-database`
+**Prompt file:** `prompts/architect-database.md`
 
 Generate Prisma schema and Zod validators.
 
@@ -55,6 +81,7 @@ Relationships:
 ## Design Commands
 
 ### `/design-tokens`
+**Prompt file:** `prompts/design-tokens.md`
 
 Generate color palette and typography definitions.
 
@@ -63,6 +90,7 @@ Generate color palette and typography definitions.
 - `product/design-system/typography.json`
 
 ### `/design-shell`
+**Prompt file:** `prompts/design-shell.md`
 
 Generate app shell (navigation, sidebar, user menu).
 
@@ -73,6 +101,7 @@ Generate app shell (navigation, sidebar, user menu).
 - `product/shell/spec.md`
 
 ### `/design-screen [section]`
+**Prompt file:** `prompts/design-screen.md`
 
 Generate UI components for a specific feature section.
 
@@ -94,6 +123,7 @@ Create a patient management screen with:
 ```
 
 ### `/sample-data [section]`
+**Prompt file:** `prompts/sample-data.md`
 
 Generate sample data for a section.
 
@@ -107,3 +137,4 @@ Generate sample data for a section.
 2. **Include context** - Mention your target users and use cases
 3. **Iterate** - Refine outputs by providing feedback
 4. **Reference existing files** - Ask the agent to check existing schemas/components
+

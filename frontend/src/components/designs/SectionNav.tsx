@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   loadSections,
@@ -103,11 +103,11 @@ function SectionItem({
   const hasScreens = section.screens.length > 0;
 
   // Expand when selected
-  useMemo(() => {
+  useEffect(() => {
     if (isSelected && !isExpanded) {
       setIsExpanded(true);
     }
-  }, [isSelected]);
+  }, [isSelected, isExpanded]);
 
   const handleClick = () => {
     if (hasScreens) {

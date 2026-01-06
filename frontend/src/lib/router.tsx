@@ -3,11 +3,12 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { Suspense, lazy } from "react";
-import { AppLayout } from "@/components/layout/AppLayout";
+import { AppLayoutWithTour } from "@/components/layout/AppLayoutWithTour";
 import PlanPage from "@/pages/PlanPage";
 import DataPage from "@/pages/DataPage";
 import DesignsPage from "@/pages/DesignsPage";
 import ExportPage from "@/pages/ExportPage";
+import DemoPage from "@/pages/DemoPage";
 import { PreviewLayout } from "@/components/preview/PreviewLayout";
 import { SectionPreviewLoader } from "@/components/preview/SectionPreviewLoader";
 
@@ -30,7 +31,7 @@ const router = createBrowserRouter([
   // Main application routes
   {
     path: "/",
-    element: <AppLayout />,
+    element: <AppLayoutWithTour />,
     children: [
       {
         index: true,
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: "export",
         element: <ExportPage />,
+      },
+      {
+        path: "demo",
+        element: <DemoPage />,
       },
     ],
   },

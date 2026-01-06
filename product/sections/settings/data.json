@@ -1,0 +1,77 @@
+{
+  "settings": {
+    "profile": {
+      "name": "Dr. Jane Wilson",
+      "email": "jane.wilson@clinic.com",
+      "phone": "(555) 123-4567",
+      "avatar": null,
+      "role": "Administrator"
+    },
+    "notifications": {
+      "emailNotifications": true,
+      "pushNotifications": true,
+      "smsNotifications": false,
+      "appointmentReminders": true,
+      "marketingEmails": false
+    },
+    "appearance": {
+      "theme": "system",
+      "language": "en",
+      "timezone": "America/New_York",
+      "dateFormat": "MM/DD/YYYY"
+    },
+    "security": {
+      "twoFactorAuth": true,
+      "sessionTimeout": "30",
+      "loginAlerts": true,
+      "lastPasswordChange": "2025-11-15T10:00:00Z"
+    }
+  },
+  "billing": {
+    "plan": "Professional",
+    "price": 49,
+    "currency": "USD",
+    "interval": "month",
+    "renewalDate": "2026-01-15",
+    "status": "active",
+    "paymentMethod": {
+      "type": "card",
+      "last4": "4242",
+      "brand": "Visa",
+      "expiryMonth": 12,
+      "expiryYear": 2027
+    }
+  },
+  "options": {
+    "themes": [
+      { "value": "light", "label": "Light" },
+      { "value": "dark", "label": "Dark" },
+      { "value": "system", "label": "System" }
+    ],
+    "languages": [
+      { "value": "en", "label": "English" },
+      { "value": "es", "label": "Español" },
+      { "value": "fr", "label": "Français" },
+      { "value": "de", "label": "Deutsch" }
+    ],
+    "timezones": [
+      { "value": "America/New_York", "label": "Eastern Time (ET)" },
+      { "value": "America/Chicago", "label": "Central Time (CT)" },
+      { "value": "America/Denver", "label": "Mountain Time (MT)" },
+      { "value": "America/Los_Angeles", "label": "Pacific Time (PT)" },
+      { "value": "Europe/London", "label": "Greenwich Mean Time (GMT)" }
+    ],
+    "dateFormats": [
+      { "value": "MM/DD/YYYY", "label": "MM/DD/YYYY" },
+      { "value": "DD/MM/YYYY", "label": "DD/MM/YYYY" },
+      { "value": "YYYY-MM-DD", "label": "YYYY-MM-DD" }
+    ],
+    "sessionTimeouts": [
+      { "value": "15", "label": "15 minutes" },
+      { "value": "30", "label": "30 minutes" },
+      { "value": "60", "label": "1 hour" },
+      { "value": "120", "label": "2 hours" },
+      { "value": "never", "label": "Never" }
+    ]
+  }
+}

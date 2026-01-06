@@ -1,4 +1,4 @@
-// Prisma Schema for DentalFlow CRM
+// Prisma Schema for HealthClinic Pro
 // Database: PostgreSQL
 
 generator client {
@@ -14,93 +14,305 @@ datasource db {
 // ENUMS
 // ==========================================
 
+enum UserRole {
+  ADMIN
+  DOCTOR
+  NURSE
+  RECEPTIONIST
+  PATIENT
+}
+
+enum AppointmentType {
+  IN_PERSON
+  VIDEO
+  PHONE
+}
+
 enum AppointmentStatus {
   SCHEDULED
   CONFIRMED
   COMPLETED
   CANCELLED
+  NO_SHOW
 }
 
-enum TreatmentStatus {
-  PLANNED
-  IN_PROGRESS
-  COMPLETED
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum BloodType {
+  A_POSITIVE
+  A_NEGATIVE
+  B_POSITIVE
+  B_NEGATIVE
+  O_POSITIVE
+  O_NEGATIVE
+  AB_POSITIVE
+  AB_NEGATIVE
+}
+
+enum DocumentType {
+  LAB_RESULT
+  PRESCRIPTION
+  REFERRAL
+  IMAGING
+  CONSENT_FORM
+  INSURANCE
+  OTHER
+}
+
+enum InsuranceStatus {
+  ACTIVE
+  EXPIRED
+  PENDING
 }
 
 // ==========================================
 // MODELS
 // ==========================================
 
-model Patient {
-  id          String   @id @default(cuid())
-  firstName   String
-  lastName    String
-  email       String   @unique
-  phone       String?
-  dateOfBirth DateTime?
-  address     String?
-  notes       String?
+model User {
+  id            String    @id @default(cuid())
+  clerkId       String    @unique
+  email         String    @unique
+  firstName     String
+  lastName      String
+  phone         String?
+  avatar        String?
+  role          UserRole  @default(PATIENT)
   
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
   // Relations
-  appointments Appointment[]
-  treatments   Treatment[]
+  patient       Patient?
+  doctor        Doctor?
+  appointments  Appointment[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
-model Dentist {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  specialty String?
-  phone     String?
+model Patient {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  // Personal Information
+  dateOfBirth       DateTime
+  gender            Gender?
+  bloodType         BloodType?
+  
+  // Contact
+  address           String?
+  city              String?
+  state             String?
+  zipCode           String?
+  emergencyContact  String?
+  emergencyPhone    String?
+  
+  // Medical
+  allergies         String[]
+  medications       String[]
+  medicalHistory    String?
+  
   // Relations
-  appointments Appointment[]
+  appointments      Appointment[]
+  documents         Document[]
+  insurance         Insurance?
+  prescriptions     Prescription[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Doctor {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Professional Info
+  specialty       String
+  licenseNumber   String    @unique
+  npi             String?   @unique
+  bio             String?
+  
+  // Availability
+  availableDays   String[]  // ["MONDAY", "TUESDAY", etc.]
+  workingHours    Json?     // { start: "09:00", end: "17:00" }
+  
+  // Relations
+  appointments    Appointment[]
+  prescriptions   Prescription[]
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Appointment {
-  id        String            @id @default(cuid())
-  dateTime  DateTime
-  duration  Int               @default(30)
-  status    AppointmentStatus @default(SCHEDULED)
-  notes     String?
+  id              String              @id @default(cuid())
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   // Relations
-  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  patientId String
+  patientId       String
+  patient         Patient             @relation(fields: [patientId], references: [id], onDelete: Cascade)
   
-  dentist   Dentist @relation(fields: [dentistId], references: [id], onDelete: Cascade)
-  dentistId String
+  doctorId        String
+  doctor          Doctor              @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  
+  createdById     String
+  createdBy       User                @relation(fields: [createdById], references: [id])
+  
+  // Appointment Details
+  date            DateTime            @db.Date
+  startTime       DateTime            @db.Time()
+  endTime         DateTime            @db.Time()
+  duration        Int                 // in minutes
+  
+  type            AppointmentType     @default(IN_PERSON)
+  status          AppointmentStatus   @default(SCHEDULED)
+  
+  reason          String
+  notes           String?
+  location        String?             // Room number or video link
+  
+  // Reminder sent
+  reminderSent    Boolean             @default(false)
+  
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
 
   @@index([patientId])
-  @@index([dentistId])
-  @@index([dateTime])
+  @@index([doctorId])
+  @@index([date])
+  @@index([status])
 }
 
-model Treatment {
-  id          String          @id @default(cuid())
-  name        String
+model Document {
+  id              String        @id @default(cuid())
+  
+  // Relations
+  patientId       String
+  patient         Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  // Document Info
+  name            String
+  type            DocumentType
+  description     String?
+  fileUrl         String
+  fileSize        Int           // in bytes
+  mimeType        String
+  
+  // Metadata
+  uploadedBy      String
+  isConfidential  Boolean       @default(false)
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([patientId])
+  @@index([type])
+}
+
+model Insurance {
+  id                String          @id @default(cuid())
+  
+  // Relations
+  patientId         String          @unique
+  patient           Patient         @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  // Insurance Details
+  provider          String
+  policyNumber      String
+  groupNumber       String?
+  
+  // Coverage
+  coverageType      String          // Individual, Family, etc.
+  copay             Decimal?        @db.Decimal(10, 2)
+  deductible        Decimal?        @db.Decimal(10, 2)
+  
+  // Status
+  status            InsuranceStatus @default(ACTIVE)
+  effectiveDate     DateTime
+  expirationDate    DateTime?
+  
+  // Subscriber Info (if different from patient)
+  subscriberName    String?
+  subscriberDob     DateTime?
+  relationship      String?         // Self, Spouse, Child, etc.
+  
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model Prescription {
+  id              String    @id @default(cuid())
+  
+  // Relations
+  patientId       String
+  patient         Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  doctorId        String
+  doctor          Doctor    @relation(fields: [doctorId], references: [id])
+  
+  // Medication Details
+  medication      String
+  dosage          String
+  frequency       String    // "Once daily", "Twice daily", etc.
+  quantity        Int
+  refills         Int       @default(0)
+  
+  // Instructions
+  instructions    String?
+  warnings        String?
+  
+  // Status
+  startDate       DateTime
+  endDate         DateTime?
+  isActive        Boolean   @default(true)
+  
+  // Pharmacy
+  pharmacy        String?
+  pharmacyPhone   String?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([patientId])
+  @@index([doctorId])
+  @@index([isActive])
+}
+
+model AuditLog {
+  id          String    @id @default(cuid())
+  
+  // Who
+  userId      String
+  userEmail   String
+  
+  // What
+  action      String    // CREATE, UPDATE, DELETE, VIEW
+  resource    String    // Patient, Appointment, etc.
+  resourceId  String
+  
+  // Details
+  changes     Json?     // { before: {}, after: {} }
+  ipAddress   String?
+  userAgent   String?
+  
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([resource])
+  @@index([createdAt])
+}
+
+model Setting {
+  id          String    @id @default(cuid())
+  key         String    @unique
+  value       Json
   description String?
-  status      TreatmentStatus @default(PLANNED)
-  startDate   DateTime?
-  endDate     DateTime?
-  cost        Float?
-  notes       String?
   
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  patientId String
-
-  @@index([patientId])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
+

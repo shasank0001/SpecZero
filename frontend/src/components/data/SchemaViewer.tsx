@@ -155,6 +155,7 @@ export function SchemaViewer({ models, className }: SchemaViewerProps) {
           "border-l flex flex-col bg-gradient-to-b from-background to-muted/5 transition-all duration-300",
           sidebarCollapsed ? "w-12" : "w-80"
         )}
+        data-tour="model-list"
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-3 border-b bg-muted/20">

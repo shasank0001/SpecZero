@@ -147,7 +147,9 @@ export default function DataPage() {
         {activeTab === "schema" && (
           <>
             {models.length > 0 ? (
-              <SchemaViewer models={models} className="h-full" />
+              <div data-tour="schema-viewer" className="h-full">
+                <SchemaViewer models={models} className="h-full" />
+              </div>
             ) : (
               <div className="flex items-center justify-center h-full p-8">
                 <EmptyState

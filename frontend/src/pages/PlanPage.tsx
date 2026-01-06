@@ -17,7 +17,6 @@ import { OverviewCardSkeleton } from "@/components/plan/OverviewCardSkeleton";
 import { FeaturesList } from "@/components/plan/FeaturesList";
 import { FeaturesListSkeleton } from "@/components/plan/FeaturesListSkeleton";
 import { RoadmapTimeline, RoadmapProgress } from "@/components/plan/RoadmapTimeline";
-import { RoadmapTimelineSkeleton, RoadmapProgressSkeleton } from "@/components/plan/RoadmapTimelineSkeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { MarkdownRenderer } from "@/components/shared/MarkdownRenderer";
 import { Skeleton } from "@/components/shared/Skeleton";
@@ -129,7 +128,7 @@ export default function PlanPage() {
           </TabsList>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-8">
+          <TabsContent value="overview" className="space-y-8" data-tour="plan-overview">
             {hasOverview ? (
               <>
                 <OverviewCard overview={overview} />

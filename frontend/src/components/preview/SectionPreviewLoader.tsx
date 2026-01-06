@@ -32,7 +32,8 @@ export function SectionPreviewLoader() {
         <EmptyState
           icon={FileQuestion}
           title="Preview not found"
-          description={`No preview found for ${sectionId}/${screenName}. Make sure the file exists at src/sections/${sectionId}/${screenName}.tsx`}
+          description={`No preview found for ${sectionId}/${screenName}. Generate section components using the design-screen command.`}
+          command={`/design-screen ${sectionId}`}
         />
       </div>
     );

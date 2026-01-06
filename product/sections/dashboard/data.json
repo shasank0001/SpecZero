@@ -1,0 +1,117 @@
+{
+  "stats": {
+    "totalPatients": 1284,
+    "totalPatientsChange": 12,
+    "todaysAppointments": 24,
+    "todaysAppointmentsChange": 8,
+    "pendingReports": 7,
+    "pendingReportsChange": -15,
+    "revenue": 48250,
+    "revenueChange": 23
+  },
+  "activities": [
+    {
+      "id": "act_001",
+      "type": "patient",
+      "title": "New Patient Registered",
+      "description": "Sarah Johnson completed registration form",
+      "timestamp": "2026-01-06T14:30:00Z",
+      "user": "System"
+    },
+    {
+      "id": "act_002",
+      "type": "appointment",
+      "title": "Appointment Confirmed",
+      "description": "John Smith confirmed appointment for Jan 8th",
+      "timestamp": "2026-01-06T13:15:00Z",
+      "user": "John Smith"
+    },
+    {
+      "id": "act_003",
+      "type": "completed",
+      "title": "Session Completed",
+      "description": "Physical therapy session with Michael Williams",
+      "timestamp": "2026-01-06T11:00:00Z",
+      "user": "Dr. Adams"
+    },
+    {
+      "id": "act_004",
+      "type": "document",
+      "title": "Lab Results Uploaded",
+      "description": "Blood work results for Emily Brown",
+      "timestamp": "2026-01-06T09:45:00Z",
+      "user": "Lab Team"
+    },
+    {
+      "id": "act_005",
+      "type": "alert",
+      "title": "Prescription Expiring",
+      "description": "David Martinez's prescription expires in 7 days",
+      "timestamp": "2026-01-05T16:20:00Z",
+      "user": "System"
+    },
+    {
+      "id": "act_006",
+      "type": "appointment",
+      "title": "Appointment Rescheduled",
+      "description": "Lisa Anderson moved appointment to Jan 10th",
+      "timestamp": "2026-01-05T14:00:00Z",
+      "user": "Lisa Anderson"
+    },
+    {
+      "id": "act_007",
+      "type": "patient",
+      "title": "Patient Profile Updated",
+      "description": "Robert Taylor updated contact information",
+      "timestamp": "2026-01-05T11:30:00Z",
+      "user": "Robert Taylor"
+    }
+  ],
+  "upcomingAppointments": [
+    {
+      "id": "apt_001",
+      "patientName": "John Smith",
+      "date": "2026-01-06",
+      "time": "14:00",
+      "type": "in-person",
+      "reason": "Annual Checkup"
+    },
+    {
+      "id": "apt_002",
+      "patientName": "Sarah Johnson",
+      "date": "2026-01-06",
+      "time": "15:30",
+      "type": "video",
+      "reason": "Follow-up Consultation"
+    },
+    {
+      "id": "apt_003",
+      "patientName": "Michael Williams",
+      "date": "2026-01-07",
+      "time": "09:00",
+      "type": "in-person",
+      "reason": "Physical Therapy"
+    },
+    {
+      "id": "apt_004",
+      "patientName": "Emily Brown",
+      "date": "2026-01-07",
+      "time": "11:30",
+      "type": "phone",
+      "reason": "Lab Results Discussion"
+    },
+    {
+      "id": "apt_005",
+      "patientName": "David Martinez",
+      "date": "2026-01-08",
+      "time": "10:00",
+      "type": "in-person",
+      "reason": "Initial Consultation"
+    }
+  ],
+  "weeklyStats": {
+    "appointments": 156,
+    "newPatients": 23,
+    "completionRate": 94
+  }
+}

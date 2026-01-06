@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { DesignSystemTypography } from "@/types/design-system";
 import { Type } from "lucide-react";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 export interface TypographyPreviewProps {
   typography: DesignSystemTypography | null;
@@ -16,15 +17,13 @@ export function TypographyPreview({
 }: TypographyPreviewProps) {
   if (!typography) {
     return (
-      <div className={cn("flex flex-col items-center justify-center p-8 text-center", className)}>
-        <div className="w-12 h-12 rounded-xl bg-muted/50 flex items-center justify-center mb-3">
-          <Type className="w-6 h-6 text-muted-foreground/50" />
-        </div>
-        <p className="text-sm font-medium text-muted-foreground mb-1">No typography defined</p>
-        <p className="text-xs text-muted-foreground/70">
-          Create <code className="px-1 py-0.5 bg-muted rounded text-[10px]">typography.json</code> in design-system/
-        </p>
-      </div>
+      <EmptyState
+        icon={Type}
+        title="No typography defined"
+        description="Generate your typography scale by running the design-tokens command in your AI agent."
+        command="/design-tokens"
+        className={className}
+      />
     );
   }
 

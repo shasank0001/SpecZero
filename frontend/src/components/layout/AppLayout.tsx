@@ -1,8 +1,10 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import { TabNav } from "./TabNav";
 import { ThemeToggle } from "./ThemeToggle";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Play } from "lucide-react";
 import { useAppShortcuts } from "@/hooks/useKeyboardShortcuts";
+import { StartTourButton } from "@/components/tour";
+import { Button } from "@/components/ui/button";
 
 export function AppLayout() {
   // Enable keyboard shortcuts for navigation
@@ -13,7 +15,7 @@ export function AppLayout() {
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-3 animate-fade-in">
+          <div className="flex items-center gap-3 animate-fade-in" data-tour="logo">
             {/* Logo mark */}
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
               <Sparkles className="h-5 w-5 text-primary-foreground" />
@@ -35,7 +37,16 @@ export function AppLayout() {
             </span>
           </div>
           
-          <ThemeToggle />
+          <div className="flex items-center gap-3">
+            <Button asChild variant="default" size="sm" className="gap-2 animate-pulse hover:animate-none">
+              <Link to="/demo">
+                <Play className="w-4 h-4" />
+                Demo
+              </Link>
+            </Button>
+            <StartTourButton />
+            <ThemeToggle />
+          </div>
         </div>
         
         {/* Tab Navigation */}

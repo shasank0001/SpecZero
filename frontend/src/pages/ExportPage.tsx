@@ -184,7 +184,7 @@ export default function ExportPage() {
           {/* Right Column - Validation & Export */}
           <div className="space-y-6">
             {/* Validation status */}
-            <div className="opacity-0 animate-fade-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+            <div className="opacity-0 animate-fade-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }} data-tour="validation-status">
               {validation ? (
                 <ValidationStatus result={validation} />
               ) : (
@@ -198,7 +198,7 @@ export default function ExportPage() {
             </div>
             
             {/* Export button */}
-            <div className="opacity-0 animate-fade-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+            <div className="opacity-0 animate-fade-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }} data-tour="export-button">
               <ExportButton
                 disabled={!validation?.isValid || isValidating}
                 projectName={projectName}

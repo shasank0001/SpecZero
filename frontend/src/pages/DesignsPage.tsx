@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import {
   SectionNav,
@@ -9,6 +9,7 @@ import {
 import { Smartphone, Tablet, Monitor, GripVertical, ChevronUp, ChevronDown } from "lucide-react";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { loadSections } from "@/lib/section-navigator-loader";
+import { useSearchParams } from "react-router-dom";
 import {
   LayoutTemplate,
   Layers,
@@ -32,9 +33,37 @@ export default function DesignsPage() {
   const [inspectorCollapsed, setInspectorCollapsed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Load sections
   const sections = useMemo(() => loadSections(), []);
+
+  // Support deep-linking from Plan/Roadmap: /designs?section=patients&screen=PatientList
+  useEffect(() => {
+    const sectionFromUrl = searchParams.get("section") ?? undefined;
+    const screenFromUrl = searchParams.get("screen") ?? undefined;
+
+    if (!sectionFromUrl) return;
+
+    const section = sections.find((s) => s.id === sectionFromUrl);
+    if (!section) return;
+
+    setActiveTab("sections");
+    setSelectedSection(section.id);
+
+    const resolvedScreen =
+      screenFromUrl && section.screens.some((sc) => sc.name === screenFromUrl)
+        ? screenFromUrl
+        : section.screens[0]?.name;
+
+    if (resolvedScreen) {
+      setSelectedScreen(resolvedScreen);
+      setSearchParams({ section: section.id, screen: resolvedScreen }, { replace: true });
+    } else {
+      setSearchParams({ section: section.id }, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sections]);
 
   // Get preview URL
   const previewUrl = useMemo(() => {
@@ -57,6 +86,7 @@ export default function DesignsPage() {
   const handleSelectScreen = (sectionId: string, screenName: string) => {
     setSelectedSection(sectionId);
     setSelectedScreen(screenName);
+    setSearchParams({ section: sectionId, screen: screenName }, { replace: true });
   };
 
   // Handle resize drag (like design-os)
@@ -253,7 +283,7 @@ export default function DesignsPage() {
         {activeTab === "sections" && (
           <>
             {/* Section Navigation */}
-            <aside className="w-64 border-r border-border bg-card overflow-auto">
+            <aside className="w-64 border-r border-border bg-card overflow-auto" data-tour="section-nav">
               <div className="px-4 py-4 border-b border-border">
                 <h3 className="font-semibold text-foreground flex items-center gap-2">
                   <FolderOpen className="w-4 h-4 text-primary" />
@@ -271,7 +301,7 @@ export default function DesignsPage() {
             </aside>
 
             {/* Preview Area + Inspector */}
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-hidden" data-tour="preview-frame">
               {previewUrl ? (
                 <>
                   {/* Preview Controls */}
