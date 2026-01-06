@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License"/>
 </p>
 
-<h1 align="center">🏗️ Vibe Architect</h1>
+<h1 align="center">🏗️ SpecZero</h1>
 
 <p align="center">
   <strong>Design your product with AI. Then build it right.</strong>
@@ -35,7 +35,7 @@ Design decisions get made on the fly, buried in code, impossible to adjust witho
 
 ## 💡 The SpecZero Process
 
-**Vibe Architect** powers a guided design and architecture process. **You + AI, working together through structured steps:**
+**SpecZero** powers a guided design and architecture process. **You + AI, working together through structured steps:**
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -96,7 +96,7 @@ Generate your implementation handoff:
 
 ## 🎬 What You See
 
-### The Vibe Architect Interface
+### The SpecZero Interface
 Four tabs guide you through the design process:
 
 | Tab | Purpose | What You See |
@@ -175,8 +175,8 @@ We designed a complete healthcare management system to demonstrate the process:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/vibe-architect.git
-cd vibe-architect
+git clone https://github.com/your-username/speczero.git
+cd speczero
 
 # Install dependencies
 cd frontend
@@ -197,9 +197,9 @@ http://localhost:5173
 ## 📁 Project Structure
 
 ```
-vibe-architect/
+speczero/
 │
-├── frontend/                    # The Vibe Architect tool
+├── frontend/                    # The SpecZero tool
 │   ├── src/
 │   │   ├── components/          # UI components
 │   │   │   ├── ui/              # shadcn/ui base components
